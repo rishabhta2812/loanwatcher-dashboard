@@ -9,6 +9,7 @@ export interface UserGroup {
   canModifyLoanTerms: boolean;
   canViewCustomerData: boolean;
   canContactCustomers: boolean;
+  role?: string; // Add role property to support current code usage
 }
 
 export const USER_GROUPS: UserGroup[] = [
@@ -32,7 +33,8 @@ export const USER_GROUPS: UserGroup[] = [
     canApproveLoans: true,
     canModifyLoanTerms: true,
     canViewCustomerData: true,
-    canContactCustomers: true
+    canContactCustomers: true,
+    role: "admin"
   },
   {
     id: "loan_officer",
@@ -50,7 +52,8 @@ export const USER_GROUPS: UserGroup[] = [
     canApproveLoans: true,
     canModifyLoanTerms: true,
     canViewCustomerData: true,
-    canContactCustomers: true
+    canContactCustomers: true,
+    role: "loanOfficer"
   },
   {
     id: "agent",
@@ -65,7 +68,8 @@ export const USER_GROUPS: UserGroup[] = [
     canApproveLoans: false,
     canModifyLoanTerms: false,
     canViewCustomerData: true,
-    canContactCustomers: true
+    canContactCustomers: true,
+    role: "agent"
   },
   {
     id: "customer",
@@ -78,7 +82,8 @@ export const USER_GROUPS: UserGroup[] = [
     canApproveLoans: false,
     canModifyLoanTerms: false,
     canViewCustomerData: false,
-    canContactCustomers: false
+    canContactCustomers: false,
+    role: "customer"
   },
   {
     id: "dealer",
@@ -92,6 +97,7 @@ export const USER_GROUPS: UserGroup[] = [
     canApproveLoans: false,
     canModifyLoanTerms: false,
     canViewCustomerData: true,
-    canContactCustomers: false
+    canContactCustomers: false,
+    role: "dealer"
   }
 ];

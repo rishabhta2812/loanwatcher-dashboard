@@ -58,12 +58,12 @@ const RecentActivity = () => {
   // Filter activities based on user permissions
   const filteredActivities = activities.filter(activity => {
     // Allow loan officers and admins to see all activities
-    if (currentUser?.group.role === 'admin' || currentUser?.group.role === 'loanOfficer') {
+    if (currentUser?.group?.role === 'admin' || currentUser?.group?.role === 'loanOfficer') {
       return true;
     }
     
     // Customers can only see their own completed payments and alerts
-    if (currentUser?.group.role === 'customer') {
+    if (currentUser?.group?.role === 'customer') {
       return activity.type === 'payment' && activity.status === 'completed' || activity.type === 'alert';
     }
     

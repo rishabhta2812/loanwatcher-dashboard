@@ -188,7 +188,7 @@ const Customers = () => {
   const getActionBadge = (action: string) => {
     switch (action) {
       case 'Approved':
-        return <Badge variant="success" className="flex items-center gap-1"><CircleCheck className="h-3 w-3" /> Approved</Badge>;
+        return <Badge variant="outline" className="flex items-center gap-1 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100"><CircleCheck className="h-3 w-3" /> Approved</Badge>;
       case 'Pending':
         return <Badge variant="secondary" className="flex items-center gap-1"><Clock className="h-3 w-3" /> Pending</Badge>;
       case 'Rejected':
