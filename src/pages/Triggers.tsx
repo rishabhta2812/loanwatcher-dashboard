@@ -1,6 +1,10 @@
 
 import React, { useState } from "react";
-import { ChevronRight, PlusCircle, Bell, CalendarDays, CalendarClock, AlarmCheck } from "lucide-react";
+import { 
+  ChevronRight, PlusCircle, Bell, CalendarDays, CalendarClock, AlarmCheck,
+  ArrowRight, TrendingUp, BarChart4, Percent, Scale, Wallet, CreditCard, BanknoteIcon,
+  Activity, ArrowDownRight, FilterX, Users
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import Navigation from "@/components/dashboard/Navigation";
@@ -23,14 +27,107 @@ import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { USER_GROUPS } from "@/types/userGroups";
 
-// Mock data for user groups
-const dummyUserGroups = [
-  "Car Loan Festival",
-  "Car Loan Co-lending",
-  "Car Loan - High Ticket",
-  "Car Loan May-Jun 2024",
-  "Car Loan High Interest"
+// Banking metrics definitions
+const bankingMetrics = [
+  {
+    id: "net_monthly_inflow",
+    name: "Net Monthly Inflow",
+    description: "totalCredit - totalDebit",
+    threshold: "> 0",
+    icon: <ArrowRight className="h-4 w-4" />,
+    category: "monthly"
+  },
+  {
+    id: "monthly_balance_delta",
+    name: "Monthly Balance Delta",
+    description: "balLast - balOpen",
+    threshold: "Decline < 15%",
+    icon: <TrendingUp className="h-4 w-4" />,
+    category: "monthly"
+  },
+  {
+    id: "credit_to_debit_ratio",
+    name: "Credit-to-Debit Ratio",
+    description: "totalCredit / totalDebit",
+    threshold: "> 1.1",
+    icon: <Scale className="h-4 w-4" />,
+    category: "monthly"
+  },
+  {
+    id: "average_daily_inflow",
+    name: "Average Daily Inflow",
+    description: "Net Monthly Inflow / 30",
+    threshold: "No fixed threshold",
+    icon: <Activity className="h-4 w-4" />,
+    category: "monthly"
+  },
+  {
+    id: "liquidity_ratio",
+    name: "Liquidity Ratio",
+    description: "balAvg / totalDebit",
+    threshold: "≥ 1.0",
+    icon: <Wallet className="h-4 w-4" />,
+    category: "monthly"
+  },
+  {
+    id: "expense_to_income_ratio",
+    name: "Expense-to-Income Ratio",
+    description: "totalDebit / totalCredit",
+    threshold: "< 0.65",
+    icon: <Percent className="h-4 w-4" />,
+    category: "monthly"
+  },
+  {
+    id: "account_turnover_ratio",
+    name: "Account Turnover Ratio",
+    description: "(credits + debits) / balAvg",
+    threshold: "< 4",
+    icon: <BanknoteIcon className="h-4 w-4" />,
+    category: "monthly"
+  },
+  {
+    id: "cash_buffer_days",
+    name: "Cash Buffer Days",
+    description: "balAvg / (totalDebit/30)",
+    threshold: "≥ 15 days",
+    icon: <CreditCard className="h-4 w-4" />,
+    category: "monthly"
+  },
+  {
+    id: "mom_net_inflow_change",
+    name: "Month-over-Month Net Inflow Change",
+    description: "Percentage change in net monthly inflow",
+    threshold: "Decline < 10%",
+    icon: <ArrowDownRight className="h-4 w-4" />,
+    category: "overall"
+  },
+  {
+    id: "net_inflow_cv",
+    name: "Net Inflow Coefficient of Variation",
+    description: "Standard Deviation / Mean of Net Inflow",
+    threshold: "< 0.25 (25%)",
+    icon: <BarChart4 className="h-4 w-4" />,
+    category: "overall"
+  },
+  {
+    id: "max_consecutive_negative",
+    name: "Max Consecutive Negative Months",
+    description: "Count of successive months with negative net inflow",
+    threshold: "< 3 consecutive months",
+    icon: <FilterX className="h-4 w-4" />,
+    category: "overall"
+  },
+  {
+    id: "salary_credit_correlation",
+    name: "Salary vs. Credit Correlation",
+    description: "Correlation between salary deposits and total credit",
+    threshold: "≥ 0.75",
+    icon: <Activity className="h-4 w-4" />,
+    category: "overall"
+  }
 ];
 
 // Mock data for existing triggers
@@ -104,6 +201,8 @@ const defaultGroups: GroupOption[] = [
 const Triggers = () => {
   const { hasPermission } = useUser();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [metricDetailsOpen, setMetricDetailsOpen] = useState(false);
+  const [selectedMetric, setSelectedMetric] = useState<any>(null);
   const [newTrigger, setNewTrigger] = useState({
     alertName: "0–30 DPD Sufficient Balance Alert",
     triggerName: "Missed Income",
@@ -119,7 +218,8 @@ const Triggers = () => {
     selectedGroups: ["Car Loan Festival", "Car Loan Co-lending"],
     selectedDefaultGroup: "",
     customGroupName: "",
-    customGroupDescription: ""
+    customGroupDescription: "",
+    selectedMetrics: [] as string[]
   });
 
   const [tab, setTab] = useState("active");
@@ -127,6 +227,11 @@ const Triggers = () => {
   const handleCreateTrigger = () => {
     toast.success("New trigger created successfully!");
     setDialogOpen(false);
+  };
+
+  const openMetricDetails = (metric: any) => {
+    setSelectedMetric(metric);
+    setMetricDetailsOpen(true);
   };
 
   if (!hasPermission("create_triggers")) {
@@ -158,6 +263,13 @@ const Triggers = () => {
     if (tab === "inactive") return trigger.status === "Inactive";
     return true; // all
   });
+
+  // Get all user groups for selection
+  const userGroupOptions = USER_GROUPS.map(group => ({
+    id: group.id,
+    name: group.name,
+    description: group.description
+  }));
 
   return (
     <div className="h-screen flex flex-col">
@@ -243,8 +355,8 @@ const Triggers = () => {
                             <SelectValue placeholder="Select groups" />
                           </SelectTrigger>
                           <SelectContent>
-                            {dummyUserGroups.map(group => (
-                              <SelectItem key={group} value={group}>{group}</SelectItem>
+                            {userGroupOptions.map(group => (
+                              <SelectItem key={group.id} value={group.id}>{group.name}</SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
@@ -311,8 +423,105 @@ const Triggers = () => {
                   
                   <Separator />
                   
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-medium">Step 3: Banking Metrics Selection</h3>
+                    <div className="grid grid-cols-1 gap-4">
+                      <div className="space-y-2">
+                        <Label>Monthly Derived Features</Label>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
+                          {bankingMetrics.filter(m => m.category === "monthly").map((metric) => (
+                            <div key={metric.id} className="flex items-start space-x-2">
+                              <Checkbox
+                                id={metric.id}
+                                checked={newTrigger.selectedMetrics.includes(metric.id)}
+                                onCheckedChange={(checked) => {
+                                  if (checked) {
+                                    setNewTrigger({
+                                      ...newTrigger, 
+                                      selectedMetrics: [...newTrigger.selectedMetrics, metric.id]
+                                    });
+                                  } else {
+                                    setNewTrigger({
+                                      ...newTrigger, 
+                                      selectedMetrics: newTrigger.selectedMetrics.filter(m => m !== metric.id)
+                                    });
+                                  }
+                                }}
+                              />
+                              <div>
+                                <div className="flex items-center">
+                                  <label htmlFor={metric.id} className="text-sm font-medium">
+                                    {metric.name}
+                                  </label>
+                                  <Button 
+                                    variant="ghost" 
+                                    size="sm" 
+                                    className="h-6 w-6 p-0 ml-1"
+                                    onClick={() => openMetricDetails(metric)}
+                                  >
+                                    <ChevronRight className="h-3 w-3" />
+                                  </Button>
+                                </div>
+                                <p className="text-xs text-muted-foreground">
+                                  {metric.description} (Threshold: {metric.threshold})
+                                </p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <Label>Overall (Cross-Month) Metrics</Label>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
+                          {bankingMetrics.filter(m => m.category === "overall").map((metric) => (
+                            <div key={metric.id} className="flex items-start space-x-2">
+                              <Checkbox
+                                id={metric.id}
+                                checked={newTrigger.selectedMetrics.includes(metric.id)}
+                                onCheckedChange={(checked) => {
+                                  if (checked) {
+                                    setNewTrigger({
+                                      ...newTrigger, 
+                                      selectedMetrics: [...newTrigger.selectedMetrics, metric.id]
+                                    });
+                                  } else {
+                                    setNewTrigger({
+                                      ...newTrigger, 
+                                      selectedMetrics: newTrigger.selectedMetrics.filter(m => m !== metric.id)
+                                    });
+                                  }
+                                }}
+                              />
+                              <div>
+                                <div className="flex items-center">
+                                  <label htmlFor={metric.id} className="text-sm font-medium">
+                                    {metric.name}
+                                  </label>
+                                  <Button 
+                                    variant="ghost" 
+                                    size="sm" 
+                                    className="h-6 w-6 p-0 ml-1"
+                                    onClick={() => openMetricDetails(metric)}
+                                  >
+                                    <ChevronRight className="h-3 w-3" />
+                                  </Button>
+                                </div>
+                                <p className="text-xs text-muted-foreground">
+                                  {metric.description} (Threshold: {metric.threshold})
+                                </p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <Separator />
+                  
                   <div className="space-y-2">
-                    <h3 className="text-lg font-medium">Step 3: Alert Settings & Define Trigger Rule</h3>
+                    <h3 className="text-lg font-medium">Step 4: Alert Settings & Define Trigger Rule</h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="condition">Select Condition</Label>
@@ -324,8 +533,8 @@ const Triggers = () => {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="Current balance > Amount Due">Current balance {`>`} Amount Due</SelectItem>
-                            <SelectItem value="Current balance > x% of EMI">Current balance {`>`} x% of EMI</SelectItem>
+                            <SelectItem value="Current balance {'>>'} Amount Due">Current balance {'>'} Amount Due</SelectItem>
+                            <SelectItem value="Current balance {'>>'} x% of EMI">Current balance {'>'} x% of EMI</SelectItem>
                             <SelectItem value="Custom Condition">Custom Condition</SelectItem>
                           </SelectContent>
                         </Select>
@@ -367,7 +576,7 @@ const Triggers = () => {
                   <Separator />
                   
                   <div className="space-y-2">
-                    <h3 className="text-lg font-medium">Step 4: Scheduling & Notifications</h3>
+                    <h3 className="text-lg font-medium">Step 5: Scheduling & Notifications</h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="frequency">Repeat Frequency</Label>
@@ -497,7 +706,7 @@ const Triggers = () => {
                   <Separator />
                   
                   <div className="space-y-2">
-                    <h3 className="text-lg font-medium">Step 5: Upload Borrower Data (Optional)</h3>
+                    <h3 className="text-lg font-medium">Step 6: Upload Borrower Data (Optional)</h3>
                     <Input type="file" />
                     <p className="text-sm text-muted-foreground">
                       Accepted file formats: CSV, XLSX. Maximum size: 10MB.
@@ -510,6 +719,86 @@ const Triggers = () => {
                   </Button>
                   <Button onClick={handleCreateTrigger}>
                     Create Trigger
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+            
+            {/* Banking Metric Details Dialog */}
+            <Dialog open={metricDetailsOpen} onOpenChange={setMetricDetailsOpen}>
+              <DialogContent className="sm:max-w-[600px]">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center">
+                    {selectedMetric?.icon}
+                    <span className="ml-2">{selectedMetric?.name}</span>
+                  </DialogTitle>
+                  <DialogDescription>
+                    Detailed information about this banking metric
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div>
+                    <h4 className="font-medium">Definition:</h4>
+                    <p>{selectedMetric?.description}</p>
+                  </div>
+                  <div>
+                    <h4 className="font-medium">Threshold:</h4>
+                    <p>{selectedMetric?.threshold}</p>
+                  </div>
+                  <div>
+                    <h4 className="font-medium">Rationale:</h4>
+                    <p className="text-sm text-muted-foreground">
+                      {selectedMetric?.id === "net_monthly_inflow" && 
+                        "A positive net inflow indicates that the borrower's income (credits) exceeds their expenditures (debits) for the month, a basic indicator of liquidity."}
+                      {selectedMetric?.id === "monthly_balance_delta" && 
+                        "A decline exceeding 15% may signal rapid depletion of funds, suggesting potential financial stress."}
+                      {selectedMetric?.id === "credit_to_debit_ratio" && 
+                        "A ratio greater than 1.1 indicates that credits are sufficiently higher than debits—suggesting robust cash inflows. Values below this threshold may indicate liquidity issues."}
+                      {selectedMetric?.id === "average_daily_inflow" && 
+                        "This metric provides insight into whether the borrower generates sufficient funds on a daily basis to meet obligations."}
+                      {selectedMetric?.id === "liquidity_ratio" && 
+                        "A ratio of at least 1.0 implies that the borrower's average available balance can cover the total monthly debits, ensuring sufficient liquidity."}
+                      {selectedMetric?.id === "expense_to_income_ratio" && 
+                        "A lower expense-to-income ratio indicates that a smaller proportion of income is spent, which is generally a positive indicator of financial health."}
+                      {selectedMetric?.id === "account_turnover_ratio" && 
+                        "A turnover ratio below 4 suggests moderate transaction activity relative to the account's average balance. High turnover may indicate erratic financial activity."}
+                      {selectedMetric?.id === "cash_buffer_days" && 
+                        "A cash buffer of 15 days or more indicates that the borrower has a reasonable reserve to handle unexpected expenses or delays in income."}
+                      {selectedMetric?.id === "mom_net_inflow_change" && 
+                        "A significant drop in net inflow from one month to the next may signal deteriorating financial performance."}
+                      {selectedMetric?.id === "net_inflow_cv" && 
+                        "A lower CV indicates that net inflow is consistent across months, suggesting stability in cash flow."}
+                      {selectedMetric?.id === "max_consecutive_negative" && 
+                        "Three or more consecutive months with negative net inflow are a strong indicator of potential financial distress."}
+                      {selectedMetric?.id === "salary_credit_correlation" && 
+                        "A high correlation (≥ 0.75) suggests that a major portion of credits comes from salary payments, indicating a stable income source."}
+                    </p>
+                  </div>
+                  <div>
+                    <h4 className="font-medium">Data Required:</h4>
+                    <ul className="text-sm text-muted-foreground list-disc ml-5">
+                      {selectedMetric?.id === "net_monthly_inflow" && 
+                        <>
+                          <li>totalCredit: Total credit amount for the month</li>
+                          <li>totalDebit: Total debit amount for the month</li>
+                        </>}
+                      {selectedMetric?.id === "monthly_balance_delta" && 
+                        <>
+                          <li>balOpen: Opening balance for the month</li>
+                          <li>balLast: Closing balance for the month</li>
+                        </>}
+                      {selectedMetric?.id === "credit_to_debit_ratio" && 
+                        <>
+                          <li>totalCredit: Total credit amount for the month</li>
+                          <li>totalDebit: Total debit amount for the month</li>
+                        </>}
+                      {/* Add more data fields for other metrics as needed */}
+                    </ul>
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button onClick={() => setMetricDetailsOpen(false)}>
+                    Close
                   </Button>
                 </DialogFooter>
               </DialogContent>
@@ -575,7 +864,8 @@ const Triggers = () => {
                         <div className="text-sm font-medium mb-1">User Groups</div>
                         <div className="flex flex-wrap gap-2">
                           {trigger.groups.map(group => (
-                            <Badge key={group} variant="outline">
+                            <Badge key={group} variant="outline" className="flex items-center gap-1">
+                              <Users className="h-3 w-3" />
                               {group}
                             </Badge>
                           ))}
