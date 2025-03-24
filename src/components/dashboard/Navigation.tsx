@@ -10,7 +10,10 @@ import {
   Menu,
   X,
   ChevronRight,
-  UserCog
+  UserCog,
+  Bell,
+  Users,
+  BarChart2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -83,6 +86,9 @@ const Navigation = () => {
     { icon: LayoutDashboard, label: "Dashboard", to: "/", requiredPermission: "view_dashboard" },
     { icon: FileText, label: "Loan Details", to: "/loan-details", requiredPermission: "view_dashboard" },
     { icon: CreditCard, label: "Payments", to: "/payments", requiredPermission: "view_dashboard" },
+    { icon: Bell, label: "Triggers", to: "/triggers", requiredPermission: "create_triggers" },
+    { icon: Users, label: "Customers", to: "/customers", requiredPermission: "view_customers" },
+    { icon: BarChart2, label: "Insights", to: "/insights", requiredPermission: "view_dashboard" },
     { icon: CalendarClock, label: "Schedule", to: "/schedule", requiredPermission: "view_dashboard" },
     { icon: Settings, label: "Settings", to: "/settings", requiredPermission: "view_dashboard" },
     { icon: UserCog, label: "User Management", to: "/users", requiredPermission: "manage_users" },
