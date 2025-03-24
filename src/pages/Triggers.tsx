@@ -324,8 +324,8 @@ const Triggers = () => {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="Current balance > Amount Due">Current balance > Amount Due</SelectItem>
-                            <SelectItem value="Current balance > x% of EMI">Current balance > x% of EMI</SelectItem>
+                            <SelectItem value="Current balance > Amount Due">Current balance {`>`} Amount Due</SelectItem>
+                            <SelectItem value="Current balance > x% of EMI">Current balance {`>`} x% of EMI</SelectItem>
                             <SelectItem value="Custom Condition">Custom Condition</SelectItem>
                           </SelectContent>
                         </Select>
