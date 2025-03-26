@@ -13,6 +13,7 @@ import NotFound from "./pages/NotFound";
 import Triggers from "./pages/Triggers";
 import Customers from "./pages/Customers";
 import Insights from "./pages/Insights";
+import PersonalLoanInsights from "./pages/PersonalLoanInsights";
 import UserManagement from "./pages/UserManagement";
 import EarlyWarningSystem from "./pages/EarlyWarningSystem";
 
@@ -33,6 +34,7 @@ const App = () => (
             <Route path="/triggers" element={<Triggers />} />
             <Route path="/customers" element={<Customers />} />
             <Route path="/insights" element={<Insights />} />
+            <Route path="/personal-loan-insights" element={<PersonalLoanInsights />} />
             <Route path="/users" element={<UserManagement />} />
             <Route path="/ews" element={<EarlyWarningSystem />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
