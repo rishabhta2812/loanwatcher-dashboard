@@ -14,6 +14,7 @@ import Triggers from "./pages/Triggers";
 import Customers from "./pages/Customers";
 import Insights from "./pages/Insights";
 import UserManagement from "./pages/UserManagement";
+import EarlyWarningSystem from "./pages/EarlyWarningSystem";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +34,7 @@ const App = () => (
             <Route path="/customers" element={<Customers />} />
             <Route path="/insights" element={<Insights />} />
             <Route path="/users" element={<UserManagement />} />
+            <Route path="/ews" element={<EarlyWarningSystem />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

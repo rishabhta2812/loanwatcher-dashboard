@@ -13,7 +13,8 @@ import {
   UserCog,
   Bell,
   Users,
-  BarChart2
+  BarChart2,
+  ShieldAlert
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -86,6 +87,7 @@ const Navigation = () => {
     { icon: LayoutDashboard, label: "Dashboard", to: "/", requiredPermission: "view_dashboard" },
     { icon: FileText, label: "Loan Details", to: "/loan-details", requiredPermission: "view_dashboard" },
     { icon: CreditCard, label: "Payments", to: "/payments", requiredPermission: "view_dashboard" },
+    { icon: ShieldAlert, label: "Early Warning", to: "/ews", requiredPermission: "view_dashboard" },
     { icon: Bell, label: "Triggers", to: "/triggers", requiredPermission: "create_triggers" },
     { icon: Users, label: "Customers", to: "/customers", requiredPermission: "view_customers" },
     { icon: BarChart2, label: "Insights", to: "/insights", requiredPermission: "view_dashboard" },
