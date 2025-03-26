@@ -354,7 +354,7 @@ const Insights = () => {
                             <div className="flex justify-between items-center p-3 bg-muted/50 rounded-md">
                               <div>
                                 <div className="font-medium">Net Inflow Coefficient of Variation</div>
-                                <div className="text-xs text-muted-foreground">Threshold: < 0.25 (25%)</div>
+                                <div className="text-xs text-muted-foreground">Threshold: &lt; 0.25 (25%)</div>
                               </div>
                               <Button variant="outline" size="sm">
                                 View History
@@ -363,7 +363,7 @@ const Insights = () => {
                             <div className="flex justify-between items-center p-3 bg-muted/50 rounded-md">
                               <div>
                                 <div className="font-medium">Maximum Consecutive Negative Months</div>
-                                <div className="text-xs text-muted-foreground">Threshold: < 3 months</div>
+                                <div className="text-xs text-muted-foreground">Threshold: &lt; 3 months</div>
                               </div>
                               <Button variant="outline" size="sm">
                                 View History
