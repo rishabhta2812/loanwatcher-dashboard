@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
@@ -15,7 +14,8 @@ import {
   Users,
   BarChart2,
   ShieldAlert,
-  TrendingUp
+  TrendingUp,
+  MessageCircle
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -93,6 +93,7 @@ const Navigation = () => {
     { icon: Users, label: "Customers", to: "/customers", requiredPermission: "view_customers" },
     { icon: BarChart2, label: "Insights", to: "/insights", requiredPermission: "view_dashboard" },
     { icon: TrendingUp, label: "Loan Insights", to: "/personal-loan-insights", requiredPermission: "view_dashboard" },
+    { icon: MessageCircle, label: "Loan Chatbot", to: "/loan-chatbot", requiredPermission: "view_dashboard" },
     { icon: CalendarClock, label: "Schedule", to: "/schedule", requiredPermission: "view_dashboard" },
     { icon: Settings, label: "Settings", to: "/settings", requiredPermission: "view_dashboard" },
     { icon: UserCog, label: "User Management", to: "/users", requiredPermission: "manage_users" },

@@ -16,6 +16,7 @@ import Insights from "./pages/Insights";
 import PersonalLoanInsights from "./pages/PersonalLoanInsights";
 import UserManagement from "./pages/UserManagement";
 import EarlyWarningSystem from "./pages/EarlyWarningSystem";
+import LoanChatbot from "./pages/LoanChatbot";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +38,7 @@ const App = () => (
             <Route path="/personal-loan-insights" element={<PersonalLoanInsights />} />
             <Route path="/users" element={<UserManagement />} />
             <Route path="/ews" element={<EarlyWarningSystem />} />
+            <Route path="/loan-chatbot" element={<LoanChatbot />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
