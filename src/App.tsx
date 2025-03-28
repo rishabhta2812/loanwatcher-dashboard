@@ -17,6 +17,7 @@ import PersonalLoanInsights from "./pages/PersonalLoanInsights";
 import UserManagement from "./pages/UserManagement";
 import EarlyWarningSystem from "./pages/EarlyWarningSystem";
 import LoanChatbot from "./pages/LoanChatbot";
+import Schedule from "./pages/Schedule";
 
 const queryClient = new QueryClient();
 
@@ -39,6 +40,7 @@ const App = () => (
             <Route path="/users" element={<UserManagement />} />
             <Route path="/ews" element={<EarlyWarningSystem />} />
             <Route path="/loan-chatbot" element={<LoanChatbot />} />
+            <Route path="/schedule" element={<Schedule />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
