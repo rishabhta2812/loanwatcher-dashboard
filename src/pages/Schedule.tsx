@@ -460,6 +460,9 @@ const Schedule = () => {
                     </div>
                   </TabsContent>
                 </Tabs>
+              </CardHeader>
+              <CardContent>
+                {/* Content for the card */}
               </CardContent>
             </Card>
             
