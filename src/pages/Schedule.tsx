@@ -340,124 +340,126 @@ const Schedule = () => {
                       <TabsTrigger value="month">Month</TabsTrigger>
                     </TabsList>
                   </div>
-                </Tabs>
-              </CardHeader>
-              <CardContent>
-                <TabsContent value="week" className="mt-0">
-                  <div className="grid grid-cols-7 gap-4">
-                    {weekViewDays.map((day, index) => (
-                      <div 
-                        key={index} 
-                        className={cn(
-                          "border rounded-md p-2 min-h-[150px]",
-                          format(day, "yyyy-MM-dd") === format(new Date(), "yyyy-MM-dd") && "bg-primary/5 border-primary/20"
-                        )}
-                      >
-                        <div className="flex flex-col items-center py-1 mb-2 border-b">
-                          <span className="text-xs text-muted-foreground">{format(day, "EEE")}</span>
-                          <span className={cn(
-                            "text-sm font-semibold",
-                            format(day, "yyyy-MM-dd") === format(new Date(), "yyyy-MM-dd") && "text-primary"
-                          )}>
-                            {format(day, "d")}
-                          </span>
-                        </div>
-                        <div className="space-y-2">
-                          {getEventsForDate(day).map(event => (
-                            <div 
-                              key={event.id} 
-                              className="p-2 rounded-md text-xs border cursor-pointer hover:bg-muted transition-colors"
-                              onClick={() => toast.info(`Clicked: ${event.title}`)}
-                            >
-                              <div className="flex items-center gap-1 mb-1">
-                                <Badge variant="outline" className={cn("text-[10px] h-4 px-1", getTypeColor(event.type))}>
-                                  {getTypeIcon(event.type)}
-                                </Badge>
-                                <span className="font-medium truncate">{event.time}</span>
+                  
+                  <TabsContent value="week" className="mt-0">
+                    <div className="grid grid-cols-7 gap-4">
+                      {weekViewDays.map((day, index) => (
+                        <div 
+                          key={index} 
+                          className={cn(
+                            "border rounded-md p-2 min-h-[150px]",
+                            format(day, "yyyy-MM-dd") === format(new Date(), "yyyy-MM-dd") && "bg-primary/5 border-primary/20"
+                          )}
+                        >
+                          <div className="flex flex-col items-center py-1 mb-2 border-b">
+                            <span className="text-xs text-muted-foreground">{format(day, "EEE")}</span>
+                            <span className={cn(
+                              "text-sm font-semibold",
+                              format(day, "yyyy-MM-dd") === format(new Date(), "yyyy-MM-dd") && "text-primary"
+                            )}>
+                              {format(day, "d")}
+                            </span>
+                          </div>
+                          <div className="space-y-2">
+                            {getEventsForDate(day).map(event => (
+                              <div 
+                                key={event.id} 
+                                className="p-2 rounded-md text-xs border cursor-pointer hover:bg-muted transition-colors"
+                                onClick={() => toast.info(`Clicked: ${event.title}`)}
+                              >
+                                <div className="flex items-center gap-1 mb-1">
+                                  <Badge variant="outline" className={cn("text-[10px] h-4 px-1", getTypeColor(event.type))}>
+                                    {getTypeIcon(event.type)}
+                                  </Badge>
+                                  <span className="font-medium truncate">{event.time}</span>
+                                </div>
+                                <div className="font-medium line-clamp-2">{event.title}</div>
                               </div>
-                              <div className="font-medium line-clamp-2">{event.title}</div>
-                            </div>
-                          ))}
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                </TabsContent>
-                <TabsContent value="month" className="mt-0">
-                  <div>
-                    <CalendarComponent
-                      mode="single"
-                      selected={date}
-                      onSelect={(newDate) => newDate && setDate(newDate)}
-                      className="rounded-md border"
-                      components={{
-                        Day: ({ day, ...props }) => {
-                          const hasEvents = getDaysWithEvents().some(
-                            eventDate => format(eventDate, "yyyy-MM-dd") === format(day, "yyyy-MM-dd")
-                          );
-                          return (
-                            <div {...props}>
-                              <div className="relative">
-                                <div>{format(day, "d")}</div>
-                                {hasEvents && (
-                                  <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 rounded-full bg-primary"></div>
-                                )}
+                      ))}
+                    </div>
+                  </TabsContent>
+                  
+                  <TabsContent value="month" className="mt-0">
+                    <div>
+                      <CalendarComponent
+                        mode="single"
+                        selected={date}
+                        onSelect={(newDate) => newDate && setDate(newDate)}
+                        className="rounded-md border"
+                        components={{
+                          Day: (props) => {
+                            // Fix: Use destructuring to get date from props
+                            const { date: dayDate, ...rest } = props;
+                            const hasEvents = getDaysWithEvents().some(
+                              eventDate => format(eventDate, "yyyy-MM-dd") === format(dayDate, "yyyy-MM-dd")
+                            );
+                            return (
+                              <div {...rest}>
+                                <div className="relative">
+                                  <div>{format(dayDate, "d")}</div>
+                                  {hasEvents && (
+                                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 rounded-full bg-primary"></div>
+                                  )}
+                                </div>
                               </div>
-                            </div>
-                          );
-                        },
-                      }}
-                    />
-                    <div className="mt-6">
-                      <h3 className="font-medium mb-3">Events for {format(date, "MMMM d, yyyy")}</h3>
-                      {getEventsForDate(startOfDay(date)).length > 0 ? (
-                        <div className="space-y-3">
-                          {getEventsForDate(startOfDay(date)).map(event => (
-                            <Card key={event.id} className="overflow-hidden">
-                              <div className="flex">
-                                <div className={cn("w-2", getTypeColor(event.type))}></div>
-                                <CardContent className="p-4">
-                                  <div className="flex items-start justify-between">
-                                    <div>
-                                      <h4 className="font-medium">{event.title}</h4>
-                                      <p className="text-sm text-muted-foreground">{event.description}</p>
-                                      <div className="flex items-center gap-3 mt-2">
-                                        <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                                          <Clock className="h-3 w-3" />
-                                          <span>{event.time}</span>
-                                        </div>
-                                        <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                                          <Users className="h-3 w-3" />
-                                          <span>{event.customerGroup} ({event.customerCount})</span>
+                            );
+                          },
+                        }}
+                      />
+                      <div className="mt-6">
+                        <h3 className="font-medium mb-3">Events for {format(date, "MMMM d, yyyy")}</h3>
+                        {getEventsForDate(startOfDay(date)).length > 0 ? (
+                          <div className="space-y-3">
+                            {getEventsForDate(startOfDay(date)).map(event => (
+                              <Card key={event.id} className="overflow-hidden">
+                                <div className="flex">
+                                  <div className={cn("w-2", getTypeColor(event.type))}></div>
+                                  <CardContent className="p-4">
+                                    <div className="flex items-start justify-between">
+                                      <div>
+                                        <h4 className="font-medium">{event.title}</h4>
+                                        <p className="text-sm text-muted-foreground">{event.description}</p>
+                                        <div className="flex items-center gap-3 mt-2">
+                                          <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                                            <Clock className="h-3 w-3" />
+                                            <span>{event.time}</span>
+                                          </div>
+                                          <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                                            <Users className="h-3 w-3" />
+                                            <span>{event.customerGroup} ({event.customerCount})</span>
+                                          </div>
                                         </div>
                                       </div>
+                                      <Badge className={cn(getTypeColor(event.type))}>
+                                        {event.type.charAt(0).toUpperCase() + event.type.slice(1)}
+                                      </Badge>
                                     </div>
-                                    <Badge className={cn(getTypeColor(event.type))}>
-                                      {event.type.charAt(0).toUpperCase() + event.type.slice(1)}
-                                    </Badge>
-                                  </div>
-                                </CardContent>
-                              </div>
-                            </Card>
-                          ))}
-                        </div>
-                      ) : (
-                        <div className="py-8 text-center text-muted-foreground">
-                          <CalendarIcon className="mx-auto h-12 w-12 opacity-20 mb-2" />
-                          <p>No events scheduled for this date</p>
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            className="mt-2"
-                            onClick={() => setShowAddEvent(true)}
-                          >
-                            <Plus className="mr-1 h-3 w-3" /> Add Event
-                          </Button>
-                        </div>
-                      )}
+                                  </CardContent>
+                                </div>
+                              </Card>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="py-8 text-center text-muted-foreground">
+                            <CalendarIcon className="mx-auto h-12 w-12 opacity-20 mb-2" />
+                            <p>No events scheduled for this date</p>
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="mt-2"
+                              onClick={() => setShowAddEvent(true)}
+                            >
+                              <Plus className="mr-1 h-3 w-3" /> Add Event
+                            </Button>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </TabsContent>
+                  </TabsContent>
+                </Tabs>
               </CardContent>
             </Card>
             
