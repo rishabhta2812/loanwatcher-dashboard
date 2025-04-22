@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import Header from "@/components/dashboard/Header";
 import Navigation from "@/components/dashboard/Navigation";
@@ -23,8 +22,8 @@ import {
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Link } from "react-router-dom";
+import { BankingHealthSummary } from "@/components/dashboard/BankingHealthSummary";
 
-// Sample data to simulate loan monitoring dashboard
 const loanAccounts = [
   { 
     id: "LOAN-5001", 
@@ -95,7 +94,6 @@ const dpdDistribution = [
   { range: "90+ Days", count: 8, percentage: 4 }
 ];
 
-// Sample key performance metrics
 const kpiMetrics = [
   {
     title: "Total Portfolio",
@@ -128,7 +126,6 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(true);
   
   useEffect(() => {
-    // Simulate loading delay for smoother animations
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 300);
@@ -173,6 +170,10 @@ const Index = () => {
             </p>
           </div>
           
+          <div className="mb-6">
+            <BankingHealthSummary />
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
             {kpiMetrics.map((metric, index) => (
               <Card key={index} className={`animate-fade-in [animation-delay:${index * 100}ms]`}>
