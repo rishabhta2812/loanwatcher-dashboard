@@ -17,19 +17,22 @@ const fallbackData: ReportData = {
       monthName: "Jan 2023",
       net_monthly_inflow: 25000,
       credit_debit_ratio: 1.2,
-      cash_buffer_days: 15
+      cash_buffer_days: 15,
+      liquidity_ratio: 0.8
     },
     {
       monthName: "Feb 2023",
       net_monthly_inflow: 28000,
       credit_debit_ratio: 1.3,
-      cash_buffer_days: 18
+      cash_buffer_days: 18,
+      liquidity_ratio: 0.85
     },
     {
       monthName: "Mar 2023",
       net_monthly_inflow: 22000,
       credit_debit_ratio: 1.1,
-      cash_buffer_days: 12
+      cash_buffer_days: 12,
+      liquidity_ratio: 0.75
     }
   ],
   overallMetrics: {
@@ -38,7 +41,10 @@ const fallbackData: ReportData = {
     net_inflow_monthly_pct_change: -0.05
   },
   additionalAdvancedFeatures: {
-    recent_net_inflow_trend: "stable",
+    recent_net_inflow_trend: {
+      last_3_month_avg: 25000,
+      pct_change: 5.2
+    },
     avg_credit_amt_by_month: {
       "Jan": 50000,
       "Feb": 52000,
