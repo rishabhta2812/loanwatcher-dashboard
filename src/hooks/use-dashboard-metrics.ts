@@ -17,9 +17,15 @@ export const useDashboardMetrics = () => {
       cash_buffer_days: latestMonth.cash_buffer_days
     },
     trendMetrics: {
-      last_3_month_avg: netInflowTrend.last_3_month_avg,
-      pct_change: netInflowTrend.pct_change,
-      trend_direction: netInflowTrend.pct_change > 0 ? "improving" : "declining"
+      last_3_month_avg: typeof netInflowTrend === 'object' && 'last_3_month_avg' in netInflowTrend 
+        ? netInflowTrend.last_3_month_avg 
+        : 0,
+      pct_change: typeof netInflowTrend === 'object' && 'pct_change' in netInflowTrend 
+        ? netInflowTrend.pct_change 
+        : 0,
+      trend_direction: typeof netInflowTrend === 'object' && 'pct_change' in netInflowTrend 
+        ? (netInflowTrend.pct_change > 0 ? "improving" : "declining")
+        : "stable"
     },
     overallHealth: {
       max_negative_months: data.overallMetrics.max_consecutive_negative_months,

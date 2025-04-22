@@ -13,6 +13,7 @@ export interface MonthlyFeature {
   net_monthly_inflow: number;
   credit_debit_ratio: number;
   cash_buffer_days: number;
+  liquidity_ratio: number;
 }
 
 export interface OverallMetrics {
@@ -21,8 +22,13 @@ export interface OverallMetrics {
   net_inflow_monthly_pct_change: number;
 }
 
+export interface NetInflowTrend {
+  last_3_month_avg: number;
+  pct_change: number;
+}
+
 export interface AdvancedFeatures {
-  recent_net_inflow_trend: string;
+  recent_net_inflow_trend: NetInflowTrend;
   avg_credit_amt_by_month: Record<string, number>;
   avg_debit_amt_by_month: Record<string, number>;
 }

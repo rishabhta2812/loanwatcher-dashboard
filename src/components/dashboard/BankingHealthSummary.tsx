@@ -40,7 +40,7 @@ export const BankingHealthSummary = () => {
           <CardContent>
             <div className="flex items-center justify-between">
               <div className="text-2xl font-bold">{indicator.value}</div>
-              <Badge variant={indicator.status}>{indicator.label}</Badge>
+              <Badge variant={indicator.status as "success" | "destructive"}>{indicator.label}</Badge>
             </div>
             <Progress
               value={
