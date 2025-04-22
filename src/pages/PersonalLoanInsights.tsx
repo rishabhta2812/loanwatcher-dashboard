@@ -1,50 +1,69 @@
 
-import { useIsMobile } from "@/hooks/use-mobile";
 import { useReportData } from "@/hooks/use-report-data";
-import Header from "@/components/dashboard/Header";
-import Navigation from "@/components/dashboard/Navigation";
-import ProfileCard from "@/components/dashboard/ProfileCard";
-import MonthlyMetricsTable from "@/components/dashboard/MonthlyMetricsTable";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Skeleton } from "@/components/ui/skeleton";
+import ProfileCard from "@/components/insights/ProfileCard";
+import MonthlyMetricsTable from "@/components/insights/MonthlyMetricsTable";
 import NetInflowChart from "@/components/dashboard/NetInflowChart";
-import { Loader } from "lucide-react";
+import SummaryCards from "@/components/insights/SummaryCards";
+import TrendWidget from "@/components/insights/TrendWidget";
+import CreditDebitBar from "@/components/insights/CreditDebitBar";
+import ThresholdTable from "@/components/insights/ThresholdTable";
 
 const PersonalLoanInsights = () => {
-  const isMobile = useIsMobile();
   const { data, isLoading, error } = useReportData();
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader className="h-8 w-8 animate-spin" />
+      <div className="container mx-auto p-6 space-y-6">
+        <Skeleton className="h-[200px] w-full" />
+        <Skeleton className="h-[300px] w-full" />
+        <Skeleton className="h-[200px] w-full" />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen text-red-500">
-        Error loading report data
+      <div className="container mx-auto p-6">
+        <Alert variant="destructive">
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>
+            Failed to load report data. Please try again later.
+          </AlertDescription>
+        </Alert>
       </div>
     );
   }
 
-  if (!data) return null;
+  if (!data) {
+    return null;
+  }
 
   return (
-    <div className="min-h-screen flex w-full">
-      <Navigation />
+    <div className="container mx-auto p-6 space-y-6">
+      <ProfileCard data={data.borrowerInfo} />
       
-      <main className={`flex-1 transition-all duration-300 ease-out-expo ${isMobile ? "ml-0" : "ml-64"}`}>
-        <Header />
-        
-        <div className="container px-4 py-6 md:px-6 md:py-8">
-          <div className="space-y-8">
-            <ProfileCard borrowerInfo={data.borrowerInfo} />
-            <NetInflowChart data={data.derivedMonthlyFeatures} />
-            <MonthlyMetricsTable data={data.derivedMonthlyFeatures} />
-          </div>
+      <div className="grid gap-6 md:grid-cols-2">
+        <NetInflowChart data={data.derivedMonthlyFeatures} />
+        <CreditDebitBar 
+          creditData={data.additionalAdvancedFeatures.avg_credit_amt_by_month}
+          debitData={data.additionalAdvancedFeatures.avg_debit_amt_by_month}
+        />
+      </div>
+      
+      <SummaryCards data={data.overallMetrics} />
+      
+      <div className="grid gap-6 md:grid-cols-2">
+        <MonthlyMetricsTable data={data.derivedMonthlyFeatures} />
+        <div className="space-y-6">
+          <TrendWidget trend={data.additionalAdvancedFeatures.recent_net_inflow_trend} />
+          <ThresholdTable 
+            monthlyThresholds={data.thresholdReport.monthly_thresholds}
+            overallThresholds={data.thresholdReport.overall_thresholds}
+          />
         </div>
-      </main>
+      </div>
     </div>
   );
 };
